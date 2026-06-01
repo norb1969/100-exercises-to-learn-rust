@@ -17,8 +17,10 @@
 // You can also find solutions to all exercises in the `solutions` git branch.
 fn greeting() -> &'static str {
     // TODO: fix me 👇
-    "I'm ready to __!"
+    let msg: &str = "I'm ready to learn Rust!";
+    return msg;
 }
+
 
 // Your solutions will be automatically verified by a set of tests.
 // You can run these tests directly by invoking the `cargo test` command in your terminal,
