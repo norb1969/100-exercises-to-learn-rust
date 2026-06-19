@@ -2,6 +2,31 @@
 //  unless a certain operation has been performed on it.
 //  You can see the expected API in the tests below.
 
+use std::ptr::null;
+
+struct DropBomb {
+    defaused: bool,
+}
+
+impl DropBomb {
+    fn new() -> Self {
+        DropBomb { defaused: false }
+    }
+
+    fn defuse(&mut self) {
+        self.defaused = true
+    }
+}
+
+impl Drop for DropBomb {
+    fn drop(&mut self) {
+        if !self.defaused {
+            panic!("This bomb has not been defused!")
+        }
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
