@@ -1,21 +1,67 @@
 // TODO: use `Status` as type for `Ticket::status`
 //   Adjust the signature and implementation of all other methods as necessary.
 
+use std::str::FromStr;
+
 #[derive(Debug, PartialEq)]
 // `derive`s are recursive: it can only derive `PartialEq` if all fields also implement `PartialEq`.
 // Same holds for `Debug`. Do what you must with `Status` to make this work.
 struct Ticket {
     title: String,
     description: String,
-    status: String,
+    status: Status,
 }
 
+#[derive(Debug, PartialEq, Clone, Copy)]
 enum Status {
-    // TODO: add the missing variants
+    ToDo,
+    InProgress,
+    Done,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseStatusError;
+
+impl FromStr for Status {
+    type Err = ParseStatusError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "ToDo" => Ok(Status::ToDo),
+            "To-Do" => Ok(Status::ToDo),
+            "InProgress" => Ok(Status::InProgress),
+            "Done" => Ok(Status::Done),
+            _ => Err(ParseStatusError),
+        }
+    }
+}
+
+impl From<&String> for Status {
+    fn from(value: &String) -> Self {
+        let e_val = Self::from_str(value);
+        e_val.unwrap()
+    }
+}
+
+impl From<Status> for String {
+    fn from(status: Status) -> Self {
+        match status {
+            Status::InProgress => String::from("InProgress"),
+            Status::Done => String::from("Done"),
+            Status::ToDo => String::from("ToDo"),
+        }
+    }
+}
+
+
+impl From<Status> for &String {
+    fn from(value: Status) -> Self {
+        value.into()
+    }
 }
 
 impl Ticket {
-    pub fn new(title: String, description: String, status: String) -> Ticket {
+    pub fn new(title: String, description: String, status: Status) -> Ticket {
         if title.is_empty() {
             panic!("Title cannot be empty");
         }
@@ -28,7 +74,7 @@ impl Ticket {
         if description.len() > 500 {
             panic!("Description cannot be longer than 500 bytes");
         }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
+        if status != Status::ToDo && status != Status::InProgress && status != Status::Done {
             panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
         }
 
@@ -48,7 +94,7 @@ impl Ticket {
     }
 
     pub fn status(&self) -> &String {
-        &self.status
+        self.status.clone().into()
     }
 }
 
