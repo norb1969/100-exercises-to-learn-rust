@@ -8,6 +8,10 @@ enum Status {
     Done,
 }
 
+trait TryFrom<String>: Sized {
+    
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
